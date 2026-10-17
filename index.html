@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Визуализатор отделки стен</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Примерка отделки стен</h1>
+        <p>Загрузите фото вашей комнаты и выберите материал</p>
+
+        <!-- Загрузка фото -->
+        <div class="upload-section">
+            <input type="file" id="imageLoader" accept="image/*">
+        </div>
+
+        <!-- Выбор материала -->
+        <div class="materials">
+            <button onclick="setMaterial('travertine')">Травертин</button>
+            <button onclick="setMaterial('microcement')">Микроцемент</button>
+            <button onclick="setMaterial('venetian')">Венецианская штукатурка</button>
+        </div>
+
+        <!-- Область отображения -->
+        <div class="canvas-container">
+            <canvas id="imageCanvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const imageLoader = document.getElementById('imageLoader');
+        const canvas = document.getElementById('imageCanvas');
+        const ctx = canvas.getContext('2d');
+        let img = new Image();
+
+        imageLoader.addEventListener('change', (e) => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                img.onload = function() {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        });
+
+        function setMaterial(type) {
+            if (!img.src) {
+                alert('Сначала загрузите фото комнаты!');
+                return;
+            }
+            // Перерисовываем картинку
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+
+            // Накладываем полупрозрачный цвет в зависимости от материала
+            ctx.fillStyle = type === 'travertine' ? 'rgba(210, 180, 140, 0.4)' :
+                            type === 'microcement' ? 'rgba(128, 128, 128, 0.4)' : 
+                            'rgba(245, 222, 179, 0.4)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+</html>
